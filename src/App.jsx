@@ -5,33 +5,44 @@
 
 
 
-import Footer from "./Pages/Admin/Components/footer";
-import Header from "./Pages/Admin/Components/header";
-import Konten from "./Pages/Admin/Components/konten";
-import Form from "./Pages/Auth/Components/form";
+
+// import Form from "./Pages/Auth/Components/form";
 import LayoutAdmin from "./Pages/Layouts/layoutAdmin";
 import LayoutAuth from "./Pages/Layouts/layoutAuth";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './Pages/components/ProtectedRoute';
+
+import Dashboard from './Pages/dashboard';
+import Mahasiswa from './Pages/mahasiswa';
+
+import Login from "./Pages/login";
+import MahasiswaDetail from "./Pages/MahasiswaDetail";
 
 const App = () => {
-  return (
-    <>
-    {/* <LayoutAuth>
-      <h2 className="text-3xl font-semibold text-center text-blue-600 mb-6">
-        Login
-      </h2>
-      <Form type="" onsubmit="handleLogin(event)" />
-      <p className="text-sm text-center text-blue-600 mt-4">
-        Belum punya akun?{" "}
-        <a href="#" className="text-blue-500 hover:underline">
-          Daftar
-        </a>
-      </p>
-    </LayoutAuth> */}
-    <LayoutAdmin>
-        <Header/>
-        <Konten/>
-        <Footer/>
-    </LayoutAdmin>
+  return (  <>
+    <BrowserRouter>
+    <Routes>
+      {/* Auth Routes */}
+      <Route path="/" element={<LayoutAuth />}>
+          <Route index element={<Login/>} />
+      </Route>
+      {/* Admin Routes */}
+      <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <LayoutAdmin />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="mahasiswa" element={<Mahasiswa />} />
+          <Route path="mahasiswa/:NIM" element={<MahasiswaDetail/>} />
+        </Route>
+    </Routes>
+    </BrowserRouter>
+    
     </>
   );
 };
