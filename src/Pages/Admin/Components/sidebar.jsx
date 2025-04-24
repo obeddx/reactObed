@@ -1,5 +1,7 @@
 import React from "react";
 import { NavLink } from 'react-router-dom';
+import Logout from "../../components/Logout";
+
 
 const Sidebar = () => {
   return (
@@ -20,6 +22,10 @@ const Sidebar = () => {
           <span className="text-lg">👩‍🎓</span>
           <span className="menu-text hidden lg:inline">Mahasiswa</span>
         </NavLink>
+        <Logout className="flex items-center space-x-2 px-6 py-2 rounded hover:bg-blue-700" />
+       
+        
+
       </div>
     </aside>
   );

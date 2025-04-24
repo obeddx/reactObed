@@ -13,7 +13,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './Pages/components/ProtectedRoute';
 
 import Dashboard from './Pages/dashboard';
-import Mahasiswa from './Pages/mahasiswa';
+// import Mahasiswa from './Pages/mahasiswa';
+import Mahasiswa from './Pages/Mahasiswa2';
 
 import Login from "./Pages/login";
 import MahasiswaDetail from "./Pages/MahasiswaDetail";
@@ -38,7 +39,7 @@ const App = () => {
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="mahasiswa" element={<Mahasiswa />} />
-          <Route path="mahasiswa/:NIM" element={<MahasiswaDetail/>} />
+          <Route path="mahasiswa/:nim" element={<MahasiswaDetail/>} />
         </Route>
     </Routes>
     </BrowserRouter>

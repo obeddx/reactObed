@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import usersData from '../data/users.json';
 import Form from './Auth/Components/Form'; // Pastikan path-nya benar
+import { toastError, toastSuccess } from '../Utils/Helpers/ToastHelpers';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -16,9 +17,11 @@ function Login() {
     
     if (user) {
       localStorage.setItem('isLoggedIn', 'true');
+      toastSuccess('Berhasil Login')
       navigate('/admin');
+
     } else {
-      alert('Login gagal!');
+      toastError("Login Gagal")
     }
   };
 
