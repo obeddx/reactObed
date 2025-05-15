@@ -11,6 +11,18 @@ function MahasiswaModal({ isModalOpen, isEdit, onClose, onSubmit, form, handleCh
                 <h2 className="text-xl font-bold mb-4">
                     {isEdit ? 'Edit Mahasiswa' : 'Tambah Mahasiswa'}
                 </h2>
+                {/* <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700">id</label>
+                        <input
+                            type="text"
+                            name="nim"
+                            value={form.id}
+                            readOnly={isEdit}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 border rounded focus:ring focus:ring-blue-300"
+                            
+                        />
+                    </div> */}
                 <form onSubmit={onSubmit}>
                     <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700">NIM</label>
@@ -24,6 +36,7 @@ function MahasiswaModal({ isModalOpen, isEdit, onClose, onSubmit, form, handleCh
                             
                         />
                     </div>
+                    
                     <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700">Nama</label>
                         <input

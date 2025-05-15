@@ -5,6 +5,7 @@ import mahasiswaList from '../data/mahasiswaList.json';
 import { useNavigate } from 'react-router-dom';
 import { toastSuccess, toastError } from '../Utils/Helpers/ToastHelpers';
 import { confirmDelete, confirmUpdate } from '../Utils/Helpers/SwalHelpers';
+import MockMhs from "../Utils/Mock/MockMhs";
  // boundary error : 
  // 1. disebabkan karena bisa jadi struktur data salah pada saat fetch atau post data, 
  // 2. passing props child dan parent berbeda
@@ -14,6 +15,7 @@ function Mahasiswa() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [form, setForm] = useState({
+            id: '',
             nim: '',
             nama: '',
             prodi: '',
@@ -27,24 +29,39 @@ function Mahasiswa() {
           }, []);
           
           const fetchMahasiswa = async () => {
-            // bisa disimulasikan delay atau nanti diganti fetch API
-            setMahasiswa(mahasiswaList);
+            try {
+              const res = await MockMhs.get("/mahasiswa");
+              console.log('Data dari fetchMahasiswa:', res.data);
+              setMahasiswa(res.data);
+            } catch (error) {
+              console.error('Error fetching mahasiswa:', error);
+              toastError('Gagal mengambil data mahasiswa');
+            }
           };
         
 
-    const addMahasiswa = (newMahasiswa) => {
-        setMahasiswa([...mahasiswa, newMahasiswa]);
+    const addMahasiswa = async (newData) => {
+        await MockMhs.post("/mahasiswa", newData);
+        fetchMahasiswa();
     };
 
-    const updateMahasiswa = (nim, newData) => {
-        const updated = mahasiswa.map((mhs) => 
-          mhs.nim === nim ? {...mhs, ...newData} : mhs
-        );
-        setMahasiswa(updated);
-      };
+    const updateMahasiswa = async (nim, newData) => {
+      try {
+        console.log('NIM yang dikirim:', nim, 'Tipe:', typeof nim);
+        console.log('Data yang dikirim untuk update:', newData);
+        const response = await MockMhs.put(`/mahasiswa/${String(nim)}`, newData);
+        console.log('Respons dari PUT:', response.data);
+        fetchMahasiswa();
+        toastSuccess('Mahasiswa berhasil diupdate!');
+      } catch (error) {
+        console.error('Error updating mahasiswa:', error);
+        toastError('Gagal mengupdate mahasiswa');
+      }
+  };
 
-    const deleteMahasiswa = (nim) => {
-        setMahasiswa(mahasiswa.filter((mhs) => mhs.nim !== nim));
+    const deleteMahasiswa =  async (nim) => {
+      await MockMhs.delete(`/mahasiswa/${nim}`);
+      fetchMahasiswa();
     };
 
     const openAddModal = () => {
@@ -55,7 +72,7 @@ function Mahasiswa() {
    
 
     const handleEdit = (mhs) => {
-        setForm({ nim: mhs.nim, nama: mhs.nama, prodi:mhs.prodi, angkatan:mhs.angkatan });
+        setForm({ id: mhs.id, nim: mhs.nim, nama: mhs.nama, prodi:mhs.prodi, angkatan:mhs.angkatan });
         setIsEdit(true);
         setIsModalOpen(true);
       };
