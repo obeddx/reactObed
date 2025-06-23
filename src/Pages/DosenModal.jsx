@@ -1,6 +1,6 @@
 import React from 'react';
 
-function MahasiswaModal({ isModalOpen, isEdit, onClose, onSubmit, form, handleChange}) {
+function DosenModal({ isModalOpen, isEdit, onClose, onSubmit, form, handleChange}) {
 
 
     if (!isModalOpen) return null;
@@ -9,22 +9,11 @@ function MahasiswaModal({ isModalOpen, isEdit, onClose, onSubmit, form, handleCh
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center bg-black/50">
             <div className="bg-white p-6 rounded-lg w-full max-w-md">
                 <h2 className="text-xl font-bold mb-4">
-                    {isEdit ? 'Edit Mahasiswa' : 'Tambah Mahasiswa'}
+                    {isEdit ? 'Edit Dosen' : 'Tambah Dosen'}
                 </h2>
-              
+               
                 <form onSubmit={onSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700">NIM</label>
-                        <input
-                            type="text"
-                            name="nim"
-                            value={form.nim}
-                            readOnly={isEdit}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded focus:ring focus:ring-blue-300"
-                            
-                        />
-                    </div>
+                    
                     
                     <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700">Nama</label>
@@ -37,7 +26,7 @@ function MahasiswaModal({ isModalOpen, isEdit, onClose, onSubmit, form, handleCh
                         />
                     </div>
                     <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700">Max SKS</label>
+                        <label className="block text-sm font-medium text-gray-700">Max Sks</label>
                         <input
                             type="number"
                             name="max_sks"
@@ -46,26 +35,7 @@ function MahasiswaModal({ isModalOpen, isEdit, onClose, onSubmit, form, handleCh
                             className="w-full px-3 py-2 border rounded focus:ring focus:ring-blue-300"
                         />
                     </div>
-                    {/* <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700">Prodi</label>
-                        <input
-                            type="text"
-                            name="prodi"
-                            value={form.prodi}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded focus:ring focus:ring-blue-300"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700">Angkatan</label>
-                        <input
-                            type="text"
-                            name="angkatan"
-                            value={form.angkatan}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded focus:ring focus:ring-blue-300"
-                        />
-                    </div> */}
+                    
                     <div className="flex justify-end space-x-2">
                         <button
                             type="button"
@@ -88,4 +58,4 @@ function MahasiswaModal({ isModalOpen, isEdit, onClose, onSubmit, form, handleCh
     );
 }
 
-export default MahasiswaModal;
+export default DosenModal;

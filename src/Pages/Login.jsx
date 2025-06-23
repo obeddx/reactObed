@@ -1,29 +1,37 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import usersData from '../data/users.json';
+import { Navigate, useNavigate } from 'react-router-dom';
+
 import Form from './Auth/Components/Form'; // Pastikan path-nya benar
 import { toastError, toastSuccess } from '../Utils/Helpers/ToastHelpers';
+import { login } from "../Utils/Apis/AuthApi";
+import { useAuthStateContext } from './Context/AuthContext';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { user, setUser } = useAuthStateContext();
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const user = usersData.users.find(
-      (u) => u.email === email && u.password === password
-    );
-    
-    if (user) {
-      localStorage.setItem('isLoggedIn', 'true');
-      toastSuccess('Berhasil Login')
-      navigate('/admin');
+  if (user) return <Navigate to="/admin" />;
 
-    } else {
-      toastError("Login Gagal")
-    }
-  };
+
+ const handleLogin = async (e) => {
+  e.preventDefault();
+  // const { email } = email;
+  // const { password } = password;
+
+  try {
+    const user = await login(email, password);
+    setUser(user); // ini akan simpan ke context + localStorage
+    localStorage.setItem("user", JSON.stringify(user));
+    toastSuccess("Login berhasil");
+   setTimeout(() => {
+      navigate("/admin/dashboard");
+    }, 10);
+  } catch (err) {
+    toastError(err.message);
+  }
+};
 
   return (
     <>

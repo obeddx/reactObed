@@ -1,8 +1,11 @@
 import React from "react";
 import Button from "./button";
+import { useAuthStateContext } from "@/Pages/Context/AuthContext";
+
 
 const Header = () => {
   // Fungsi untuk toggle menu profil
+  const { user } = useAuthStateContext();
   const toggleProfileMenu = () => {
     const menu = document.getElementById("profileMenu");
     if (menu) {
@@ -13,6 +16,7 @@ const Header = () => {
   return (
     <header className="bg-white shadow-md p-4 flex justify-between items-center">
       <h1 className="text-2xl font-semibold text-gray-800">Mahasiswa</h1>
+      <h1>Login sebagai: <strong>{user?.role}</strong></h1>
       <div className="relative">
         {/* <button
           onClick={toggleProfileMenu}

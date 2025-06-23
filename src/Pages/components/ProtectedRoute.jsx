@@ -1,9 +1,10 @@
 import { Navigate } from 'react-router-dom';
+import { useAuthStateContext } from '../Context/AuthContext';
 
 function ProtectedRoute({ children }) {
-  const isAuthenticated = localStorage.getItem('isLoggedIn') === 'true';
+ const { user } = useAuthStateContext();
   
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to="/" replace />;
   }
   
