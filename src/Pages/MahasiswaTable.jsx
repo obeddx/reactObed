@@ -9,6 +9,7 @@ function MahasiswaTable({ mahasiswa = [], onEdit, onDelete, onDetail, getTotalSk
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIM</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Max SKS</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -20,6 +21,7 @@ function MahasiswaTable({ mahasiswa = [], onEdit, onDelete, onDetail, getTotalSk
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{mhs.id}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{mhs.nim}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{mhs.nama}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{mhs.max_sks}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                     <button
                                         onClick={() => onDetail(mhs.id)}

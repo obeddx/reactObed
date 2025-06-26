@@ -5,23 +5,66 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStateContext } from './Context/AuthContext';
 import { toastSuccess, toastError } from '../Utils/Helpers/ToastHelpers';
 import { confirmDelete, confirmUpdate } from '../Utils/Helpers/SwalHelpers';
-import {
-  getAllKelas,
-  storeKelas,
-  updateKelas,
-  deleteKelas,
-} from "../Utils/Apis/KelasApi";
-import { getAllDosen } from "../Utils/Apis/DosenApi";
-import { getAllMatkul } from "../Utils/Apis/MatkulApi";
-import { getAllMahasiswa } from "../Utils/Apis/MahasiswaApi";
+// import {
+//   getAllKelas,
+//   storeKelas,
+//   updateKelas,
+//   deleteKelas,
+// } from "../Utils/Apis/KelasApi";
+// import { getAllDosen } from "../Utils/Apis/DosenApi";
+// import { getAllMatkul } from "../Utils/Apis/MatkulApi";
+// import { getAllMahasiswa } from "../Utils/Apis/MahasiswaApi";
+import { useDosen } from '../Utils/Hooks/useDosen';
+import { useKelas } from '../Utils/Hooks/useKelas';
+import { useMatkul } from '../Utils/Hooks/useMatkul';
+import { useMahasiswa } from '../Utils/Hooks/useMahasiswa';
+import { useStoreKelas, useUpdateKelas, useDeleteKelas } from '../Utils/Hooks/useKelas';
 
 function RencanaStudi() {
 
     const { user } = useAuthStateContext();
-    const [kelas, setKelas] = useState([]);
-    const [dosen, setDosen] = useState([]);
-    const [mahasiswa, setMahasiswa] = useState([]);
-    const [mataKuliah, setMataKuliah] = useState([]);
+
+              const [page, setPage] = useState(1);
+              const [perPage, setPerPage] = useState(5);
+              const [sort, setSort] = useState("name");
+              const [order, setOrder] = useState("asc");
+              const [search, setSearch] = useState("");
+          
+            const {
+              data: result = { data: [], total: 0 },
+              isLoading: isLoadingKelas,
+            } = useKelas({
+              q: search,
+              _sort: sort,
+              _order: order,
+              _page: page,
+              _limit: perPage
+            });
+            const { data: kelas = [] } = result;
+            const totalCount = result.total;
+            const totalPages = Math.ceil(totalCount / perPage);
+
+
+              const { data: matkulResult = { data: [] } } = useMatkul();
+              const { data: dosenResult = { data: [] } } = useDosen();
+              const { data: mahasiswaResult = { data: [] } } = useMahasiswa();
+              const dosen = dosenResult.data || [];
+              const mahasiswa = mahasiswaResult.data || [];
+              const mataKuliah = matkulResult.data || [];
+
+        //    const { data: dosen = [] } = useDosen();
+        //    const { data: kelas = [] } = useKelas();
+        //    const { data: mahasiswa = [] } = useMahasiswa();
+        //    const { data: mataKuliah = [] } = useMatkul();
+
+           const { mutate: store } = useStoreKelas();
+           const { mutate: update } = useUpdateKelas();
+           const { mutate: remove } = useDeleteKelas();
+           
+    // const [kelas, setKelas] = useState([]);
+    // const [dosen, setDosen] = useState([]);
+    // const [mahasiswa, setMahasiswa] = useState([]);
+    // const [mataKuliah, setMataKuliah] = useState([]);
 
     const [selectedMhs, setSelectedMhs] = useState({});
     const [selectedDsn, setSelectedDsn] = useState({});
@@ -29,22 +72,22 @@ function RencanaStudi() {
     const [form, setForm] = useState({ mata_kuliah_id: "", dosen_id: "" });
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+    // useEffect(() => {
+    //     fetchData();
+    // }, []);
 
-    const fetchData = async () => {
-            const [resKelas, resDosen, resMahasiswa, resMataKuliah] = await Promise.all([
-                getAllKelas(),
-                getAllDosen(),
-                getAllMahasiswa(),
-                getAllMatkul(),
-            ]);
-            setKelas(resKelas.data);
-            setDosen(resDosen.data);
-            setMahasiswa(resMahasiswa.data);
-            setMataKuliah(resMataKuliah.data);
-    };
+    // const fetchData = async () => {
+    //         const [resKelas, resDosen, resMahasiswa, resMataKuliah] = await Promise.all([
+    //             getAllKelas(),
+    //             getAllDosen(),
+    //             getAllMahasiswa(),
+    //             getAllMatkul(),
+    //         ]);
+    //         setKelas(resKelas.data);
+    //         setDosen(resDosen.data);
+    //         setMahasiswa(resMahasiswa.data);
+    //         setMataKuliah(resMataKuliah.data);
+    // };
     const mataKuliahSudahDipakai = kelas.map(k => k.mata_kuliah_id);
     const mataKuliahBelumAdaKelas = mataKuliah.filter(m => !mataKuliahSudahDipakai.includes(m.id));
 
@@ -77,10 +120,10 @@ function RencanaStudi() {
             mahasiswa_ids: [...kelasItem.mahasiswa_ids, mhsId]
         };
 
-        await updateKelas(kelasItem.id, updated);
+        await update({id: kelasItem.id, data: updated});
         toastSuccess("Mahasiswa ditambahkan");
         setSelectedMhs(prev => ({ ...prev, [kelasItem.id]: "" }));
-        fetchData();
+        // fetchData();
     };
 
     const handleDeleteMahasiswa = async (kelasItem, mhsId) => {
@@ -89,7 +132,7 @@ function RencanaStudi() {
             mahasiswa_ids: kelasItem.mahasiswa_ids.filter(id => id !== mhsId)
         };
 
-        await updateKelas(kelasItem.id, updated);
+         await update({id: kelasItem.id, data: updated});
         toastSuccess("Mahasiswa dihapus");
         fetchData();
     };
@@ -112,14 +155,14 @@ function RencanaStudi() {
             return;
         }
 
-        await updateKelas(kelasItem.id, { ...kelasItem, dosen_id: dsnId });
+        await update({id: kelasItem.id, data:{ ...kelasItem, dosen_id: dsnId }});
         toastSuccess("Dosen diperbarui");
         fetchData();
     };
 
     const handleDeleteKelas = async (kelasId) => {
         confirmDelete(async () => {
-            await deleteKelas(kelasId);
+            await remove(kelasId);
             toastSuccess("Kelas dihapus");
             fetchData();
         });
@@ -140,11 +183,13 @@ function RencanaStudi() {
             toastError("Form tidak lengkap");
             return;
         }
-        await storeKelas({ ...form, mahasiswa_ids: [] });
+        await store({ ...form, mahasiswa_ids: [] });
         setIsModalOpen(false);
         toastSuccess("Kelas ditambahkan");
         fetchData();
     };
+      const handlePrev = () => setPage((prev) => Math.max(prev - 1, 1));
+      const handleNext = () => setPage((prev) => Math.min(prev + 1, totalPages));
 
     return(
         <div className="container mx-auto p-4">
@@ -156,6 +201,7 @@ function RencanaStudi() {
                         + Tambah Kelas
                 </button>
             )}
+            
             <RencanaStudiTable
                 kelas={kelas}
                 mahasiswa={mahasiswa}

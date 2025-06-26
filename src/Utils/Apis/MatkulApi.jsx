@@ -1,7 +1,8 @@
 import axios from "@/Utils/AxiosInstance";
 
 // Ambil semua mahasiswa
-export const getAllMatkul = () => axios.get("/matkul");
+export const getAllMatkul = (params = {}) =>
+    axios.get("/matkul", { params });
 
 // Ambil 1 matkul
 export const getMatkul = (id) => axios.get(`/matkul/${id}`);

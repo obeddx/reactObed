@@ -4,18 +4,46 @@ import DosenTable from './DosenTable';
 import { useNavigate } from 'react-router-dom';
 import { toastSuccess, toastError } from '../Utils/Helpers/ToastHelpers';
 import { confirmDelete, confirmUpdate } from '../Utils/Helpers/SwalHelpers';
-import {
-  getAllDosen,
-  storeDosen,
-  updateDosen,
-  deleteDosen,
-} from "../Utils/Apis/DosenApi";
+// import {
+//   getAllDosen,
+//   storeDosen,
+//   updateDosen,
+//   deleteDosen,
+// } from "../Utils/Apis/DosenApi";
+import { useDosen } from '../Utils/Hooks/useDosen';
+import { useStoreDosen, useUpdateDosen, useDeleteDosen } from '../Utils/Hooks/useDosen';
  // boundary error : 
  // 1. disebabkan karena bisa jadi struktur data salah pada saat fetch atau post data, 
  // 2. passing props child dan parent berbeda
 
 function Dosen() {
-    const [dosen, setDosen] = useState([]);
+
+      const [page, setPage] = useState(1);
+      const [perPage, setPerPage] = useState(5);
+      const [sort, setSort] = useState("name");
+      const [order, setOrder] = useState("asc");
+      const [search, setSearch] = useState("");
+  
+    const {
+      data: result = { data: [], total: 0 },
+      isLoading: isLoadingDosen,
+    } = useDosen({
+      q: search,
+      _sort: sort,
+      _order: order,
+      _page: page,
+      _limit: perPage
+    });
+    const { data: dosen = [] } = result;
+    const totalCount = result.total;
+    const totalPages = Math.ceil(totalCount / perPage);
+
+  //  const { data: dosen = [] } = useDosen();
+   const { mutate: store } = useStoreDosen();
+   const { mutate: update } = useUpdateDosen();
+   const { mutate: remove } = useDeleteDosen();
+
+    // const [dosen, setDosen] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [form, setForm] = useState({
@@ -27,13 +55,13 @@ function Dosen() {
 
         const navigate = useNavigate();
 
-        useEffect(() => {
-            setTimeout(() => fetchDosen(), 500);
-          }, []);
+        // useEffect(() => {
+        //     setTimeout(() => fetchDosen(), 500);
+        //   }, []);
           
-          const fetchDosen = async () => {
-             getAllDosen().then((res) => setDosen(res.data));
-          };
+        //   const fetchDosen = async () => {
+        //      getAllDosen().then((res) => setDosen(res.data));
+        //   };
 
     const openAddModal = () => {
         setForm({ nama: "", max_sks: 0});
@@ -64,7 +92,8 @@ function Dosen() {
               return false; // gagal
             }
         
-            updateDosen(form.id, form);
+             update({ id: form.id, data: form });
+             setForm({nama: "", max_sks: 0});
             toastSuccess('Dosen berhasil diupdate!');
             return true; // sukses
           });
@@ -82,11 +111,11 @@ function Dosen() {
             newData.id = newId; 
           
             toastSuccess('Dosen berhasil ditambah!')
-          storeDosen(newData);
+          store(newData);
           
         }
       
-        setForm({nama: ""});
+        setForm({nama: "", max_sks: 0});
         setIsEdit(false);
         setIsModalOpen(false);
       }
@@ -94,11 +123,13 @@ function Dosen() {
       const handleDelete = async (id) => {
        
         confirmDelete(()=>{
-          deleteDosen(id);
+          remove(id);
           toastSuccess('Berhasil Hapus data')
         });
 
       }
+      const handlePrev = () => setPage((prev) => Math.max(prev - 1, 1));
+      const handleNext = () => setPage((prev) => Math.min(prev + 1, totalPages));
 
     return (
         <div className="container mx-auto p-4">
@@ -109,6 +140,45 @@ function Dosen() {
             >
                 Tambah Dosen
             </button>
+             <div className="flex flex-wrap gap-2 mb-4">
+              {/* Search */}
+              <input
+                type="text"
+                placeholder="Cari nama..."
+                className="border px-3 py-1 rounded flex-grow"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+              />
+
+              {/* Sort By Field */}
+              <select
+                value={sort}
+                onChange={(e) => {
+                  setSort(e.target.value);
+                  setPage(1);
+                }}
+                className="border px-3 py-1 rounded"
+              >
+                <option value="nama">Sort by Nama</option>
+                <option value="max_sks">Sort by Max SKS</option>
+              </select>
+
+              {/* Sort Order */}
+              <select
+                value={order}
+                onChange={(e) => {
+                  setOrder(e.target.value);
+                  setPage(1);
+                }}
+                className="border px-3 py-1 rounded"
+              >
+                <option value="asc">Asc</option>
+                <option value="desc">Desc</option>
+              </select>
+            </div>
             <DosenModal
                 isModalOpen={isModalOpen}
                 isEdit={isEdit}
@@ -124,6 +194,27 @@ function Dosen() {
                 onEdit={handleEdit}
                 onDetail={(id) => navigate(`/admin/dosen/${id}`)}
             />
+            <div className="flex justify-between items-center mt-4">
+              <p className="text-sm">
+                Halaman {page} dari {totalPages}
+              </p>
+              <div className="flex gap-2">
+                <button
+                  className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                  onClick={handlePrev}
+                  disabled={page === 1}
+                >
+                  Prev
+                </button>
+                <button
+                  className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                  onClick={handleNext}
+                  disabled={page === totalPages}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
         </div>
     );
 }

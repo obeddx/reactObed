@@ -5,18 +5,45 @@ import MatkulTable from './MatkulTable';
 import { useNavigate } from 'react-router-dom';
 import { toastSuccess, toastError } from '../Utils/Helpers/ToastHelpers';
 import { confirmDelete, confirmUpdate } from '../Utils/Helpers/SwalHelpers';
-import {
-  getAllMatkul,
-  storeMatkul,
-  updateMatkul,
-  deleteMatkul,
-} from "../Utils/Apis/MatkulApi";
+// import {
+//   getAllMatkul,
+//   storeMatkul,
+//   updateMatkul,
+//   deleteMatkul,
+// } from "../Utils/Apis/MatkulApi";
+import { useMatkul } from '../Utils/Hooks/useMatkul';
+import { useStoreMatkul, useUpdateMatkul, useDeleteMatkul } from '../Utils/Hooks/useMatkul';
  // boundary error : 
  // 1. disebabkan karena bisa jadi struktur data salah pada saat fetch atau post data, 
  // 2. passing props child dan parent berbeda
 
 function Matkul() {
-    const [matkul, setMatkul] = useState([]);
+    // const [matkul, setMatkul] = useState([]);
+
+          const [page, setPage] = useState(1);
+          const [perPage, setPerPage] = useState(5);
+          const [sort, setSort] = useState("name");
+          const [order, setOrder] = useState("asc");
+          const [search, setSearch] = useState("");
+      
+        const {
+          data: result = { data: [], total: 0 },
+          isLoading: isLoadingMatkul,
+        } = useMatkul({
+          q: search,
+          _sort: sort,
+          _order: order,
+          _page: page,
+          _limit: perPage
+        });
+        const { data: matkul = [] } = result;
+        const totalCount = result.total;
+        const totalPages = Math.ceil(totalCount / perPage);
+
+      //  const { data: matkul = [] } = useMatkul();
+       const { mutate: store } = useStoreMatkul();
+       const { mutate: update } = useUpdateMatkul();
+       const { mutate: remove } = useDeleteMatkul();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [form, setForm] = useState({
@@ -28,13 +55,13 @@ function Matkul() {
 
         const navigate = useNavigate();
 
-        useEffect(() => {
-            setTimeout(() => fetchMatkul(), 500);
-          }, []);
+        // useEffect(() => {
+        //     setTimeout(() => fetchMatkul(), 500);
+        //   }, []);
           
-          const fetchMatkul = async () => {
-             getAllMatkul().then((res) => setMatkul(res.data));
-          };
+        //   const fetchMatkul = async () => {
+        //      getAllMatkul().then((res) => setMatkul(res.data));
+        //   };
         
 
 
@@ -71,7 +98,7 @@ function Matkul() {
               return false; // gagal
             }
         
-            updateMatkul(form.id, form);
+            update({ id: form.id, data: form });
             toastSuccess('Matkul berhasil diupdate!');
             return true; // sukses
           });
@@ -89,7 +116,7 @@ function Matkul() {
             newData.id = newId; 
           
             toastSuccess('Matkul berhasil ditambah!')
-          storeMatkul(newData);
+          store(newData);
           
         }
       
@@ -101,11 +128,13 @@ function Matkul() {
       const handleDelete = async (id) => {
        
         confirmDelete(()=>{
-          deleteMatkul(id);
+          remove(id);
           toastSuccess('Berhasil Hapus data')
         });
 
       }
+      const handlePrev = () => setPage((prev) => Math.max(prev - 1, 1));
+      const handleNext = () => setPage((prev) => Math.min(prev + 1, totalPages));
 
     return (
         <div className="container mx-auto p-4">
@@ -116,6 +145,45 @@ function Matkul() {
             >
                 Tambah Matkul
             </button>
+              <div className="flex flex-wrap gap-2 mb-4">
+              {/* Search */}
+              <input
+                type="text"
+                placeholder="Cari nama..."
+                className="border px-3 py-1 rounded flex-grow"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+              />
+
+              {/* Sort By Field */}
+              <select
+                value={sort}
+                onChange={(e) => {
+                  setSort(e.target.value);
+                  setPage(1);
+                }}
+                className="border px-3 py-1 rounded"
+              >
+                <option value="name">Sort by Nama Matkul</option>
+                <option value="sks">Sort by  SKS Matkul</option>
+              </select>
+
+              {/* Sort Order */}
+              <select
+                value={order}
+                onChange={(e) => {
+                  setOrder(e.target.value);
+                  setPage(1);
+                }}
+                className="border px-3 py-1 rounded"
+              >
+                <option value="asc">Asc</option>
+                <option value="desc">Desc</option>
+              </select>
+            </div>
             <MatkulModal
                 isModalOpen={isModalOpen}
                 isEdit={isEdit}
@@ -131,6 +199,27 @@ function Matkul() {
                 onEdit={handleEdit}
                 onDetail={(id) => navigate(`/admin/matkul/${id}`)}
             />
+             <div className="flex justify-between items-center mt-4">
+              <p className="text-sm">
+                Halaman {page} dari {totalPages}
+              </p>
+              <div className="flex gap-2">
+                <button
+                  className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                  onClick={handlePrev}
+                  disabled={page === 1}
+                >
+                  Prev
+                </button>
+                <button
+                  className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                  onClick={handleNext}
+                  disabled={page === totalPages}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
         </div>
     );
 }
