@@ -13,7 +13,7 @@ import Dashboard from '@/Pages/Dashboard';
 // import Mahasiswa from './Pages/mahasiswa';
 import Mahasiswa from './Pages/Mahasiswa2';
 
-import Login from "./Pages/login";
+import Login from "@/Pages/Login";
 import MatkulDetail from "./Pages/MatkulDetail";
 import DosenDetail from "./Pages/DosenDetail";
 import MahasiswaDetail from "./Pages/MahasiswaDetail";
