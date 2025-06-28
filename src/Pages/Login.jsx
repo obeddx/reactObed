@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-import Form from './Auth/Components/Form'; // Pastikan path-nya benar
+import Form from './Auth/Components/form'; // Pastikan path-nya benar
 import { toastError, toastSuccess } from '../Utils/Helpers/ToastHelpers';
 import { login } from "../Utils/Apis/AuthApi";
 import { useAuthStateContext } from './Context/AuthContext';
