@@ -1,6 +1,6 @@
 import Button from './button'; // Sesuaikan path
-import Input from './Input'; // Sesuaikan path
-import Label from './Label'; // Sesuaikan path
+import Input from './input'; // Sesuaikan path
+import Label from './label'; // Sesuaikan path
 
 const Form = ({ onSubmit, email, setEmail, password, setPassword }) => {
   return (
