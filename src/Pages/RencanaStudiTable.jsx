@@ -1,4 +1,4 @@
-import Button from "@/Pages/Admin/Components/Button";
+import Button from "@/Pages/Admin/Components/button";
 import Select from "@/Pages/Admin/Components/Select";
 
 export default function RencanaStudiTable({
