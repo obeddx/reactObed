@@ -1,6 +1,6 @@
 // import Form from "/Admin/Components/Form";
 import Label from "@/Pages/Admin/Components/Label";
-import Button from "@/Pages/Admin/Components/Button";
+import Button from "@/Pages/Admin/Components/button";
 import Form from "./Admin/Components/Form";
 
 const RencanaStudiModal = ({
