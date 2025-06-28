@@ -9,7 +9,7 @@ import LayoutAuth from "./Pages/Layouts/layoutAuth";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './Pages/components/ProtectedRoute';
 
-import Dashboard from './Pages/dashboard';
+import Dashboard from '@/Pages/Dashboard';
 // import Mahasiswa from './Pages/mahasiswa';
 import Mahasiswa from './Pages/Mahasiswa2';
 
