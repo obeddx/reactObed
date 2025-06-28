@@ -1,6 +1,5 @@
 // import Form from "/Admin/Components/Form";
 import Label from "@/Pages/Admin/Components/Label";
-import Input from "@/Pages/Admin/Components/Input";
 import Button from "@/Pages/Admin/Components/Button";
 import Form from "./Admin/Components/Form";
 
